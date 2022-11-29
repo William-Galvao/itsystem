@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 
 
@@ -13,7 +14,9 @@ const firebaseConfig = {
 };
 
 
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app)
 
 const auth = getAuth();
 
@@ -30,4 +33,4 @@ export function logout() {
     signOut(auth)
 }
 
-export { auth }
+export { auth, db }
