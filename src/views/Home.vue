@@ -31,8 +31,10 @@ async function getAllClientes() {
         fetchedClientes.push(cliente)
         clientes.value = fetchedClientes;
         loading.value = false;
+        
 
     });
+    
 }
 
 function showClientes() {
@@ -62,7 +64,7 @@ async function getCliente(id) {
             Celular: docSnap.data().Celular,
             Email: docSnap.data().Email
         }
-        console.log("Document data:", docSnap.data());
+        console.log("Document data:", docSnap.data(), docSnap.id );
     } else {
         console.log("No such document!");
     }
@@ -137,9 +139,9 @@ function closePopup() {
                                     class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
                                     <fa icon="magnifying-glass" />
                                 </button>
-                                <button class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
+                                <a :href="`/cadastrarcliente/${cliente.id}`" class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
                                     <fa icon="pencil" />
-                                </button>
+                                </a>
                                 <button class="text-white bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-600">
                                     <fa icon="trash-can" />
                                 </button>
@@ -159,8 +161,8 @@ function closePopup() {
             </a>
         </main>
         <div v-if="popup"
-            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
-            <div class="py-4 md:py-0 mx-1 md:mx-0 bg-white md:w-1/2 md:h-1/2 flex flex-col justify-center px-4 gap-y-2">
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
+            <div class="py-4 md:py-0 mx-1 md:mx-0 bg-white md:w-1/2 md:h-1/2 flex flex-col justify-center px-4 gap-y-2 border-2 border-black">
                 <div class="border-b-2 border-gray-800 pb-2">
                     <p><span class="font-semibold">{{cliente.Ativo? "Ativo" : "Inativo"}}</span></p>
                     <p><span class="text-sm font-semibold">Razao Social:</span> {{ cliente.RazaoSocial }}</p>
@@ -175,7 +177,7 @@ function closePopup() {
                     <p><span class="text-sm font-semibold">E-mail:</span> {{ cliente.Email }}</p>
                 </div>
                 <button @click="closePopup"
-                    class="self-center mt-2 w-1/5 px-3 py-2 md:px-0 md:py-1 bg-red-600 text-white rounded-lg hover:bg-red-800 flex items-center justify-center gap-x-2">
+                    class="self-center mt-4 w-1/5 px-3 py-2 md:px-0 md:py-1 bg-red-600 text-white rounded-lg hover:bg-red-800 flex items-center justify-center gap-x-2">
                     <fa icon="rotate-left" class="mr-1" />
                     <span class="hidden md:block">Voltar</span>
                 </button>

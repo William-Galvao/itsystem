@@ -2,8 +2,9 @@
 import { computed } from '@vue/reactivity';
 import { ref } from 'vue';
 import Navbar from '../components/Navbar.vue';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { db } from '../firebase';
+import { useRoute } from 'vue-router';
 
 const ativo = ref(true)
 const cnpj = ref("")
@@ -17,6 +18,36 @@ const email = ref("")
 const erro = ref(null)
 const loading = ref(false)
 const success = ref(false)
+
+const route = useRoute();
+const idCliente = route.params.id
+
+if (idCliente) {
+    async function getCliente() {
+        const docRef = doc(db, "clientes", idCliente);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            
+                ativo.value = docSnap.data().Ativo,
+                cnpj.value = docSnap.data().CNPJ,
+                razaoSocial.value = docSnap.data().RazaoSocial,
+                endereco.value = docSnap.data().Endereco,
+                nomeContato.value = docSnap.data().NomeContato,
+                cargo.value = docSnap.data().Cargo,
+                telefone.value = docSnap.data().Telefone,
+                celular.value = docSnap.data().Celular,
+                email.value = docSnap.data().Email
+            
+            console.log("Document data:", docSnap.data(), docSnap.id);
+        } else {
+            console.log("No such document!");
+        }
+    }
+    getCliente()
+}
+
+
 
 const cliente = computed(() => ({
     Ativo: ativo.value,
@@ -38,16 +69,10 @@ async function postNovoCliente() {
         setTimeout(() => erro.value = null, 5000)
         return
     }
-    if (/^\d+$/.test(cliente.value)) {
-        erro.value = "O CNPJ deve conter apenas numeros."
-        loading.value = false;
-        setTimeout(() => erro.value = null, 5000)
-        return
-    }
     const docRef = await addDoc(collection(db, "clientes"), cliente.value);
     loading.value = false;
     success.value = true;
-    
+
     ativo.value = true
     cnpj.value = ""
     razaoSocial.value = ""

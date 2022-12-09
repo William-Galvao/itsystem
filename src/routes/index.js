@@ -9,7 +9,7 @@ const routes = [
             requiresAuth: true
         }
     },
-    { path: "/cadastrarcliente", name: "cadastrarcliente", component: () => import("@/views/CadastrarCliente.vue"),
+    { path: "/cadastrarcliente/:id?", name: "cadastrarcliente", component: () => import("@/views/CadastrarCliente.vue"),
     meta: {
         requiresAuth: true
     } },
