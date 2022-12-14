@@ -3,13 +3,16 @@
 import { ref } from 'vue';
 import Navbar from '../components/Navbar.vue';
 import { db } from '../firebase';
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore";
 
 
 const selectedMenu = ref('')
 const clientes = ref([])
 const loading = ref(false)
 const popup = ref(false)
+
+const deleteSuccess = ref(false)
+
 const cliente = ref({})
 
 async function getAllClientes() {
@@ -31,10 +34,10 @@ async function getAllClientes() {
         fetchedClientes.push(cliente)
         clientes.value = fetchedClientes;
         loading.value = false;
-        
+
 
     });
-    
+
 }
 
 function showClientes() {
@@ -64,15 +67,28 @@ async function getCliente(id) {
             Celular: docSnap.data().Celular,
             Email: docSnap.data().Email
         }
-        console.log("Document data:", docSnap.data(), docSnap.id );
+        console.log("Document data:", docSnap.data(), docSnap.id);
     } else {
         console.log("No such document!");
+    }
+}
+
+async function deleteCliente(id, nome) {
+    if (confirm(`Voce realmente deseja deletar as informacoes do cliente ${nome}?`)) {
+        await deleteDoc(doc(db, "clientes", id));
+        getAllClientes()
+        deleteSuccess.value = true
+        setTimeout(() => deleteSuccess.value = false, 5000);
+
+    } else {
+        return
     }
 }
 
 function closePopup() {
     popup.value = false;
 }
+
 
 
 
@@ -108,7 +124,7 @@ function closePopup() {
         <!-- Exibe as informações referentes ao que está selecionado na variável 'selectedMenu' -->
         <main class="flex flex-col gap-y-4 my-4">
             <a v-if="selectedMenu == 'clientes'" href="/cadastrarcliente"
-                class="self-center w-1/6 text-center px-4 py-2 bg-indigo-500 text-white font-semibold rounded-lg hover:bg-indigo-800">
+                class="self-end text-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800">
                 <span class="hidden md:block">Novo Cliente</span>
                 <fa class="md:hidden" icon="plus" />
             </a>
@@ -139,10 +155,12 @@ function closePopup() {
                                     class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
                                     <fa icon="magnifying-glass" />
                                 </button>
-                                <a :href="`/cadastrarcliente/${cliente.id}`" class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
+                                <a :href="`/cadastrarcliente/${cliente.id}`"
+                                    class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
                                     <fa icon="pencil" />
                                 </a>
-                                <button class="text-white bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-600">
+                                <button @click="deleteCliente(cliente.id, cliente.RazaoSocial)"
+                                    class="text-white bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-600">
                                     <fa icon="trash-can" />
                                 </button>
                             </div>
@@ -155,16 +173,20 @@ function closePopup() {
 
 
             <a v-if="selectedMenu == 'funcionarios'" href="/cadastrarfuncionario"
-                class="self-center w-1/6 text-center px-4 py-2 bg-indigo-500 text-white font-semibold rounded-lg hover:bg-indigo-800">
+            class="self-end text-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800">
                 <span class="hidden md:block">Novo Funcionario</span>
                 <fa class="md:hidden" icon="plus" />
             </a>
+
         </main>
+
+
         <div v-if="popup"
             class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
-            <div class="py-4 md:py-0 mx-1 md:mx-0 bg-white md:w-1/2 md:h-1/2 flex flex-col justify-center px-4 gap-y-2 border-2 border-black">
+            <div
+                class="py-4 md:py-0 mx-1 md:mx-0 bg-white md:w-1/2 md:h-1/2 flex flex-col justify-center px-4 gap-y-2 border-2 border-black">
                 <div class="border-b-2 border-gray-800 pb-2">
-                    <p><span class="font-semibold">{{cliente.Ativo? "Ativo" : "Inativo"}}</span></p>
+                    <p><span class="font-semibold">{{ cliente.Ativo ? "Ativo" : "Inativo" }}</span></p>
                     <p><span class="text-sm font-semibold">Razao Social:</span> {{ cliente.RazaoSocial }}</p>
                     <p><span class="text-sm font-semibold">CNPJ:</span> {{ cliente.CNPJ }}</p>
                     <p><span class="text-sm font-semibold">Endereco:</span> {{ cliente.Endereco }}</p>
@@ -183,6 +205,16 @@ function closePopup() {
                 </button>
             </div>
         </div>
+
+        <div v-if="deleteSuccess"
+            class="animate__animated animate__bounceInDown absolute top-5 w-full flex justify-center items-center">
+            <div
+                class="text-white bg-green-600 rounded-lg flex justify-center items-center w-full py-4 gap-x-4 px-2 md:mx-2">
+                <fa class="text-xl" icon="check" />
+                <span class="font-semibold">Os dados foram excluidos do banco.</span>
+            </div>
+        </div>
+
     </div>
 
 </template>

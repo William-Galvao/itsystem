@@ -2,7 +2,7 @@
 import { computed } from '@vue/reactivity';
 import { ref } from 'vue';
 import Navbar from '../components/Navbar.vue';
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from '../firebase';
 import { useRoute } from 'vue-router';
 
@@ -61,14 +61,30 @@ const cliente = computed(() => ({
     Email: email.value,
 }))
 
-async function postNovoCliente() {
+async function postCliente() {
+
     loading.value = true;
+
+    // Validação dos campos
     if (cliente.value.CNPJ.length != 14) {
         erro.value = "O CNPJ deve conter obrigatoriamente 14 digitos."
         loading.value = false;
         setTimeout(() => erro.value = null, 5000)
         return
     }
+    // ***
+
+    if (idCliente) {
+        const docRef = doc(db, "clientes", idCliente)
+        await updateDoc(docRef, cliente.value)
+        loading.value = false;
+        success.value = true;
+        setTimeout(() => success.value = false, 5000);
+        return
+    }
+
+
+
     const docRef = await addDoc(collection(db, "clientes"), cliente.value);
     loading.value = false;
     success.value = true;
@@ -93,7 +109,8 @@ async function postNovoCliente() {
     <Navbar />
     <div class="h-screen p-4">
         <div class="flex text-gray-600 text-2xl font-semibold border-b-2 border-gray-600 pb-2">
-            Cadastro de Novo Cliente
+            <span v-if="!idCliente" >Cadastro de Novo Cliente</span>
+            <span v-if="idCliente">Atualizar Cliente</span>
         </div>
 
         <form class="my-4 text-gray-600">
@@ -146,7 +163,7 @@ async function postNovoCliente() {
                     Voltar
                 </a>
             </button>
-            <button @click="postNovoCliente" class="bg-green-600 text-white px-8 py-1 rounded-lg hover:bg-green-800">
+            <button @click="postCliente" class="bg-green-600 text-white px-8 py-1 rounded-lg hover:bg-green-800">
                 <span v-if="loading">
                     <svg aria-hidden="true"
                         class="mr-2 w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -173,12 +190,21 @@ async function postNovoCliente() {
                 </div>
             </div>
 
-            <div v-if="success"
+            <div v-if="success && !idCliente"
                 class="animate__animated animate__bounceInDown absolute top-5 w-full flex justify-center items-center">
                 <div
                     class="text-white bg-green-600 rounded-lg flex justify-center items-center w-full py-4 gap-x-4 px-2 md:mx-2">
                     <fa class="text-xl" icon="check" />
                     <span class="font-semibold">A nova empresa foi cadastrada com sucesso.</span>
+                </div>
+            </div>
+
+            <div v-if="success && idCliente"
+                class="animate__animated animate__bounceInDown absolute top-5 w-full flex justify-center items-center">
+                <div
+                    class="text-white bg-green-600 rounded-lg flex justify-center items-center w-full py-4 gap-x-4 px-2 md:mx-2">
+                    <fa class="text-xl" icon="check" />
+                    <span class="font-semibold">Os dados da empresa foram atualizados com sucesso.</span>
                 </div>
             </div>
         </div>

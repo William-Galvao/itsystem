@@ -3,6 +3,7 @@ import { getCurrentUser } from "../firebase";
 
 const routes = [
     { path: "/login", name: "login", component: () => import("@/views/Login.vue") },
+    { path: "/contaconfig", name: "contaconfig", component: () => import("@/views/ContaConfig.vue") },
     {
         path: "/", name: "home", component: () => import("@/views/Home.vue"),
         meta: {
