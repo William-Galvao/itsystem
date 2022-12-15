@@ -153,6 +153,48 @@ async function postFuncionario() {
         return
     }
 
+    if (!dataNasc.value) {
+        erro.value = "O preenhcimento do campo 'Data Nascimento' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.EmailCorp) {
+        erro.value = "O preenhcimento do campo 'E-mail Corporativo' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.TelefonePessoal) {
+        erro.value = "O preenhcimento do campo 'Telefone Pessoal' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.Endereco) {
+        erro.value = "O preenhcimento do campo 'Endereço' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.Cargo) {
+        erro.value = "O preenhcimento do campo 'Cargo' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.Nivel) {
+        erro.value = "O preenhcimento do campo 'Nível' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!dataAdmissao.value) {
+        erro.value = "O preenhcimento do campo 'Data Admissão' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
     // ***
 
     const docRef = await setDoc(doc(db, "funcionarios", cpf.value), funcionario.value);
@@ -223,7 +265,7 @@ async function postFuncionario() {
                 </div>
 
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">Endereco<span class="text-xs">*</span></label>
+                    <label class="block mb-1 text-sm font-medium">Endereço<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" v-model="endereco" />
                 </div>
             </div>
@@ -236,7 +278,7 @@ async function postFuncionario() {
                     <input class="bg-gray-100 px-2" v-model="cargo" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Nivel<span class="text-xs">*</span></label>
+                    <label class="block mb-1 text-sm font-medium">Nível<span class="text-xs">*</span></label>
                     <select class="bg-gray-100 px-2" v-model="nivel">
                         <option>Junior</option>
                         <option>Pleno</option>
@@ -250,7 +292,7 @@ async function postFuncionario() {
                     <input class="bg-gray-100 px-2" v-model="banco" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Agencia</label>
+                    <label class="block mb-1 text-sm font-medium">Agência</label>
                     <input class="w-16 bg-gray-100 px-2" v-model="agencia" />
                 </div>
                 <div>
@@ -277,11 +319,11 @@ async function postFuncionario() {
 
 
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">Data Admissao<span class="text-xs">*</span></label>
+                    <label class="block mb-1 text-sm font-medium">Data Admissão<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" type="date" v-model="dataAdmissao" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Contratacao<span class="text-xs">*</span></label>
+                    <label class="block mb-1 text-sm font-medium">Contratação</label>
                     <select class="bg-gray-100 px-2" v-model="contratacao">
                         <option>CLT</option>
                         <option>CNPJ</option>
@@ -292,7 +334,7 @@ async function postFuncionario() {
                     <label class="block mb-1 text-sm font-medium">Valor Fixo</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="fixoValorToCurrency"
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="fixoValorToCurrency"
                             v-model.number="fixoValor">
 
                     </span>
@@ -302,7 +344,7 @@ async function postFuncionario() {
                     <label class="block mb-1 text-sm font-medium">Valor Hora</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="horaValorToCurrency" v-model="horaValor">
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="horaValorToCurrency" v-model="horaValor">
 
                     </span>
                 </div>
@@ -310,35 +352,35 @@ async function postFuncionario() {
                     <label class="block mb-1 text-sm font-medium">Transporte</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="transporteValorToCurrency"
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="transporteValorToCurrency"
                             v-model="transporteValor">
 
                     </span>
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Refeicao</label>
+                    <label class="block mb-1 text-sm font-medium">Refeição</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="refeicaoValorToCurrency"
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="refeicaoValorToCurrency"
                             v-model="refeicaoValor">
 
                     </span>
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Auxilio</label>
+                    <label class="block mb-1 text-sm font-medium">Auxílio</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="auxilioValorToCurrency"
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="auxilioValorToCurrency"
                             v-model="auxilioValor">
 
                     </span>
                 </div>
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Saude</label>
+                    <label class="block mb-1 text-sm font-medium">Plano Saúde</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="saudePlanoToCurrency" v-model="saudePlano">
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="saudePlanoToCurrency" v-model="saudePlano">
 
                     </span>
                 </div>
@@ -346,7 +388,7 @@ async function postFuncionario() {
                     <label class="block mb-1 text-sm font-medium">Plano Odonto</label>
                     <span class="flex items-center">
                         <span class="-mr-6 z-10">R$</span>
-                        <input class="bg-gray-100 px-2 text-end w-36" @blur="odontoPlanoToCurrency"
+                        <input class="bg-gray-100 px-2 text-end w-32" @blur="odontoPlanoToCurrency"
                             v-model="odontoPlano">
 
                     </span>
@@ -408,7 +450,12 @@ async function postFuncionario() {
         </div>
 
 
-
+        <div v-if="erro"
+            class="animate__animated animate__bounceInDown absolute top-5 w-full flex justify-center items-center">
+            <div class="flex flex-col text-center text-white text-sm font-semibold bg-red-500 rounded-lg py-1 px-8">
+                <p>{{ erro }}</p>
+            </div>
+        </div>
 
     </div>
 </template>

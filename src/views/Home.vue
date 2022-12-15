@@ -100,28 +100,28 @@ function closePopup() {
 
     <div class="h-screen p-4">
 
-        <!-- Define os botıes de menu baseado no conte˙do do array 'menus' -->
+        <!-- Define os botÔøΩes de menu baseado no conteÔøΩdo do array 'menus' -->
         <div class="flex justify-evenly border-b-2 border-gray-400 pb-4">
 
             <button @click="showClientes"
-                class="bg-gray-500 text-white font-semibold w-1/6 py-4 flex justify-center items-center rounded-lg hover:bg-gray-600">
-                <span class="hidden md:block">CLIENTES</span>
+                class="bg-gray-500 text-white font-semibold w-1/6 py-2 flex justify-center items-center rounded-lg hover:bg-gray-600">
+                <span class="hidden md:block">Clientes</span>
                 <fa class="md:hidden" icon="building" />
             </button>
             <button @click="showFuncionarios"
-                class="bg-gray-500 text-white font-semibold w-1/6 py-4 flex justify-center items-center rounded-lg hover:bg-gray-600">
-                <span class="hidden md:block">FUNCIONARIOS</span>
+                class="bg-gray-500 text-white font-semibold w-1/6 py-2 flex justify-center items-center rounded-lg hover:bg-gray-600">
+                <span class="hidden md:block">Funcion√°rios</span>
                 <fa class="md:hidden" icon="user" />
             </button>
             <button
-                class="bg-gray-500 text-white font-semibold w-1/6 py-4 flex justify-center items-center rounded-lg hover:bg-gray-600">
-                <span class="hidden md:block">RELATORIOS</span>
+                class="bg-gray-500 text-white font-semibold w-1/6 py-2 flex justify-center items-center rounded-lg hover:bg-gray-600">
+                <span class="hidden md:block">Relat√≥rios</span>
                 <fa class="md:hidden" icon="clipboard-list" />
             </button>
 
         </div>
 
-        <!-- Exibe as informaÁıes referentes ao que est· selecionado na vari·vel 'selectedMenu' -->
+        <!-- Exibe as informaÔøΩÔøΩes referentes ao que estÔøΩ selecionado na variÔøΩvel 'selectedMenu' -->
         <main class="flex flex-col gap-y-4 my-4">
             <a v-if="selectedMenu == 'clientes'" href="/cadastrarcliente"
                 class="self-end text-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800">
@@ -140,27 +140,27 @@ function closePopup() {
             <table v-if="selectedMenu == 'clientes'" class="text-center">
                 <thead>
                     <tr class="bg-gray-500 text-white">
-                        <th class="border-2 border-white">Razao Social</th>
+                        <th class="border-2 border-white">Raz√£o Social</th>
                         <th class="border-2 border-white">CNPJ</th>
-                        <th class="border-2 border-white">Acoes</th>
+                        <th class="border-2 border-white">A√ß√µes</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="cliente in clientes">
+                    <tr class="even:bg-gray-200" v-for="cliente in clientes">
                         <td>{{ cliente.RazaoSocial }}</td>
                         <td>{{ cliente.CNPJ }}</td>
                         <td>
                             <div class="flex content-center justify-evenly">
                                 <button @click="getCliente(cliente.id)"
-                                    class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
+                                    class="text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600">
                                     <fa icon="magnifying-glass" />
                                 </button>
                                 <a :href="`/cadastrarcliente/${cliente.id}`"
-                                    class="text-white bg-gray-500 px-3 py-2 rounded-lg hover:bg-gray-600">
+                                    class="text-white bg-green-600 px-2 py-1 rounded-lg hover:bg-green-700">
                                     <fa icon="pencil" />
                                 </a>
                                 <button @click="deleteCliente(cliente.id, cliente.RazaoSocial)"
-                                    class="text-white bg-red-600 px-3 py-2 rounded-lg hover:bg-gray-600">
+                                    class="text-white bg-red-600 px-2 py-1 rounded-lg hover:bg-gray-600">
                                     <fa icon="trash-can" />
                                 </button>
                             </div>
@@ -182,7 +182,7 @@ function closePopup() {
 
 
         <div v-if="popup"
-            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
+            class="animate__animated animate__fadeIn fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
             <div
                 class="py-4 md:py-0 mx-1 md:mx-0 bg-white md:w-1/2 md:h-1/2 flex flex-col justify-center px-4 gap-y-2 border-2 border-black">
                 <div class="border-b-2 border-gray-800 pb-2">
