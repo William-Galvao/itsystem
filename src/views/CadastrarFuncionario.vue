@@ -38,6 +38,8 @@ const empresas = ref([])
 const cliente = ref("")
 const clientes = ref([])
 
+const erro = ref("")
+
 async function getAllClientes() {
     let fetchedClientes = []
 
@@ -93,7 +95,7 @@ function odontoPlanoToCurrency() {
 
 function dateConvert(date) {
     const splited = date.split('-');
-    return new Date(splited[0],splited[1]-1,splited[2])
+    return new Date(splited[0], splited[1] - 1, splited[2])
 }
 
 
@@ -126,10 +128,33 @@ const funcionario = computed(() => ({
     ValorPlanoSaude: parseFloat(saudePlano.value),
     ValorPlanoOdonto: parseFloat(odontoPlano.value),
     Empresas: empresas.value
-    
+
 }))
 
 async function postFuncionario() {
+
+    // Validação dos campos
+
+    if (!funcionario.value.Nome) {
+        erro.value = "O preenhcimento do campo 'Nome Completo' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.CPF) {
+        erro.value = "O preenhcimento do campo 'CPF' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!funcionario.value.RG) {
+        erro.value = "O preenhcimento do campo 'RG' é obrigatório."
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    // ***
+
     const docRef = await setDoc(doc(db, "funcionarios", cpf.value), funcionario.value);
     console.log(docRef)
 }
@@ -140,7 +165,7 @@ async function postFuncionario() {
     <Navbar />
     <div class="h-screen p-4">
         <div class="flex text-gray-600 text-2xl font-semibold border-b-2 border-gray-600 pb-2">
-            <span>Cadastro de Novo Funcionario</span>
+            <span>Cadastro de Novo Funcionário</span>
 
         </div>
 
@@ -153,16 +178,16 @@ async function postFuncionario() {
             <div class="flex flex-col md:flex-row gap-y-2 gap-x-4">
 
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">Nome Completo</label>
+                    <label class="block mb-1 text-sm font-medium">Nome Completo <span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" v-model="nomeCompleto" />
                 </div>
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium">CPF</label>
+                    <label class="block mb-1 text-sm font-medium">CPF<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" v-model="cpf" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">RG</label>
+                    <label class="block mb-1 text-sm font-medium">RG<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" v-model="rg" />
                 </div>
             </div>
@@ -170,7 +195,7 @@ async function postFuncionario() {
             <div class="flex flex-col md:flex-row gap-y-2 gap-x-4 my-2">
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Data Nascimento</label>
+                    <label class="block mb-1 text-sm font-medium">Data Nascimento<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" type="date" v-model="dataNasc" />
                 </div>
 
@@ -179,17 +204,17 @@ async function postFuncionario() {
                     <input class="bg-gray-100 w-full px-2" v-model="pessoalEmail" />
                 </div>
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">E-mail Corporativo</label>
+                    <label class="block mb-1 text-sm font-medium">E-mail Corporativo<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" v-model="corporativoEmail" />
                 </div>
-            
+
             </div>
 
             <div class="flex flex-col md:flex-row gap-y-2 gap-x-4 my-2">
 
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Telefone Pessoal</label>
+                    <label class="block mb-1 text-sm font-medium">Telefone Pessoal<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" v-model="pessoalTelefone" />
                 </div>
                 <div>
@@ -198,7 +223,7 @@ async function postFuncionario() {
                 </div>
 
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">Endereco</label>
+                    <label class="block mb-1 text-sm font-medium">Endereco<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" v-model="endereco" />
                 </div>
             </div>
@@ -207,11 +232,11 @@ async function postFuncionario() {
 
 
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Cargo</label>
+                    <label class="block mb-1 text-sm font-medium">Cargo<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" v-model="cargo" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Nivel</label>
+                    <label class="block mb-1 text-sm font-medium">Nivel<span class="text-xs">*</span></label>
                     <select class="bg-gray-100 px-2" v-model="nivel">
                         <option>Junior</option>
                         <option>Pleno</option>
@@ -252,11 +277,11 @@ async function postFuncionario() {
 
 
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">Data Admissao</label>
+                    <label class="block mb-1 text-sm font-medium">Data Admissao<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" type="date" v-model="dataAdmissao" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Contratacao</label>
+                    <label class="block mb-1 text-sm font-medium">Contratacao<span class="text-xs">*</span></label>
                     <select class="bg-gray-100 px-2" v-model="contratacao">
                         <option>CLT</option>
                         <option>CNPJ</option>
@@ -350,7 +375,9 @@ async function postFuncionario() {
                 <div class="w-full flex items-end gap-x-1">
                     <div v-for="empresa, index in empresas">
                         <span @click="empresas.splice(index, 1)"
-                            class="bg-blue-600 py-1 px-2 rounded-lg text-white font-semibold flex items-center gap-x-1 cursor-pointer hover:bg-blue-800">{{ empresa.split(' ').slice(0, 2).join(' ')}}
+                            class="bg-blue-600 py-1 px-2 rounded-lg text-white font-semibold flex items-center gap-x-1 cursor-pointer hover:bg-blue-800">{{
+                                    empresa.split(' ').slice(0, 2).join(' ')
+                            }}
                             <fa class="text-sm hover:scale-125" icon="delete-left" />
                         </span>
                     </div>
@@ -371,11 +398,12 @@ async function postFuncionario() {
                 </a>
             </button>
 
-            <button @click.prevent="postFuncionario" class="bg-green-600 text-white px-8 py-1 rounded-lg hover:bg-green-800">
-                
-                    <fa icon="floppy-disk" class="mr-1" />
-                    Salvar
-                
+            <button @click.prevent="postFuncionario"
+                class="bg-green-600 text-white px-8 py-1 rounded-lg hover:bg-green-800">
+
+                <fa icon="floppy-disk" class="mr-1" />
+                Salvar
+
             </button>
         </div>
 

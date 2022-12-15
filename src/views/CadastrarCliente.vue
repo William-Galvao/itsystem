@@ -65,13 +65,66 @@ async function postCliente() {
 
     loading.value = true;
 
-    // Valida��o dos campos
-    if (cliente.value.CNPJ.length != 14) {
-        erro.value = "O CNPJ deve conter obrigatoriamente 14 digitos."
+    // Validação dos campos
+
+    if(!cliente.value.CNPJ){
+        erro.value = "O preenhcimento do campo 'CNPJ' é obrigatório."
         loading.value = false;
         setTimeout(() => erro.value = null, 5000)
         return
     }
+
+    if(!cliente.value.RazaoSocial){
+        erro.value = "O preenhcimento do campo 'Razão Social' é obrigatório."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if(!cliente.value.Endereco){
+        erro.value = "O preenhcimento do campo 'Endereço' é obrigatório."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if(!cliente.value.NomeContato){
+        erro.value = "O preenhcimento do campo 'Nome do Contato' é obrigatório."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if(!cliente.value.Telefone && !cliente.value.Celular){
+        erro.value = "É necessário informar pelo menos um número de contato, telefone ou celular."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if(!cliente.value.Email){
+        erro.value = "O preenhcimento do campo 'E-mail' é obrigatório."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+    if (!isNaN(cliente.value.NomeContato) || cliente.value.NomeContato.length < 3) {
+        erro.value = "O campo 'Nome do Contato' exige um valor de pelo menos três dígitos, somente letras."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+
+    if (isNaN(cliente.value.CNPJ) || cliente.value.CNPJ.length != 14) {
+        erro.value = "O campo 'CNPJ' deve conter 14 dígitos, apenas números."
+        loading.value = false;
+        setTimeout(() => erro.value = null, 5000)
+        return
+    }
+
+
     // ***
 
     if (idCliente) {
@@ -120,21 +173,21 @@ async function postCliente() {
             </div>
             <div class="flex flex-col md:flex-row gap-y-2 gap-x-4">
                 <div>
-                    <label class="block mb-1 text-sm font-medium">CNPJ</label>
+                    <label class="block mb-1 text-sm font-medium">CNPJ<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" v-model="cnpj" />
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Razao Social</label>
+                    <label class="block mb-1 text-sm font-medium">Razão Social<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-80 px-2" v-model="razaoSocial" />
                 </div>
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">Endereco</label>
+                    <label class="block mb-1 text-sm font-medium">Endereço<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" v-model="endereco" />
                 </div>
             </div>
             <div class="flex flex-col md:flex-row gap-y-2 gap-x-4 my-2">
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Nome do Contato</label>
+                    <label class="block mb-1 text-sm font-medium">Nome do Contato<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 px-2" v-model="nomeContato" />
                 </div>
                 <div>
@@ -150,7 +203,7 @@ async function postCliente() {
                     <input class="bg-gray-100 px-2" v-model="celular" />
                 </div>
                 <div class="w-full">
-                    <label class="block mb-1 text-sm font-medium">E-mail</label>
+                    <label class="block mb-1 text-sm font-medium">E-mail<span class="text-xs">*</span></label>
                     <input class="bg-gray-100 w-full px-2" v-model="email" />
                 </div>
             </div>
@@ -182,9 +235,9 @@ async function postCliente() {
                 </span>
             </button>
             <div v-if="erro"
-                class="animate__animated animate__bounceInDown absolute top-5 w-full flex justify-center items-center">
+            class="animate__animated animate__bounceInDown absolute top-5 w-full flex justify-center items-center">
                 <div
-                    class="text-white bg-red-600 rounded-lg flex justify-center items-center w-full py-4 gap-x-4 px-2 md:mx-2">
+                class="flex gap-x-4 text-center text-white text-sm font-semibold bg-red-500 rounded-lg py-2 px-4">
                     <fa class="text-xl" icon="circle-exclamation" />
                     <span class="font-semibold">{{ erro }}</span>
                 </div>
