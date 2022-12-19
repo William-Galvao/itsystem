@@ -8,12 +8,15 @@ import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore"
 
 const selectedMenu = ref('')
 const clientes = ref([])
+const funcionarios = ref([])
 const loading = ref(false)
-const popup = ref(false)
+const popupCliente = ref(false)
+const popupFuncionario = ref(false)
 
 const deleteSuccess = ref(false)
 
 const cliente = ref({})
+const funcionario = ref({})
 
 async function getAllClientes() {
     let fetchedClientes = []
@@ -40,6 +43,52 @@ async function getAllClientes() {
 
 }
 
+async function getAllFuncionarios() {
+    let fetchedFuncionarios = []
+    loading.value = true;
+    const querySnapshot = await getDocs(collection(db, "funcionarios"));
+    querySnapshot.forEach((doc) => {
+        const funcionario = {
+            id: doc.id,
+            Ativo:  doc.data().Ativo,
+            Nome: doc.data().Nome,
+            CPF: doc.data().CPF,
+            RG: doc.data().RG,
+            Nascimento: doc.data().Nascimento,
+            EmailPessoal: doc.data().EmailPessoal,
+            EmailCorp: doc.data().EmailCorp,
+            TelefonePessoal: doc.data().TelefonePessoal,
+            TelefoneCorp: doc.data().TelefoneCorp,
+            Endereco: doc.data().Endereco,
+            Cargo: doc.data().Cargo,
+            Nivel: doc.data().Nivel,
+            Banco: doc.data().Banco,
+            Agencia: doc.data().Agencia,
+            Conta: doc.data().Conta,
+            TipoPIX: doc.data().TipoPIX,
+            ChavePIX: doc.data().ChavePIX,
+            Admissao: doc.data().Admissao,
+            TipoContratacao: doc.data().TipoContratacao,
+            ValorFixo: doc.data().ValorFixo,
+            ValorHora: doc.data().ValorHora,
+            ValorTransporte: doc.data().ValorTransporte,
+            ValorRefeicao: doc.data().ValorRefeicao,
+            ValorAuxilio: doc.data().ValorAuxilio,
+            ValorPlanoSaude: doc.data().ValorPlanoSaude,
+            ValorPlanoOdonto: doc.data().ValorPlanoOdonto,
+            Empresas: doc.data().Empresas,
+            Admin: doc.data().Admin
+        }
+        fetchedFuncionarios.push(funcionario)
+        funcionarios.value = fetchedFuncionarios;
+        loading.value = false;
+
+
+    });
+    console.log(funcionarios.value)
+
+}
+
 function showClientes() {
     selectedMenu.value = "clientes"
     getAllClientes()
@@ -48,6 +97,7 @@ function showClientes() {
 
 function showFuncionarios() {
     selectedMenu.value = "funcionarios"
+    getAllFuncionarios()
 }
 
 async function getCliente(id) {
@@ -55,7 +105,7 @@ async function getCliente(id) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        popup.value = true
+        popupCliente.value = true
         cliente.value = {
             Ativo: docSnap.data().Ativo,
             CNPJ: docSnap.data().CNPJ,
@@ -66,6 +116,48 @@ async function getCliente(id) {
             Telefone: docSnap.data().Telefone,
             Celular: docSnap.data().Celular,
             Email: docSnap.data().Email
+        }
+        console.log("Document data:", docSnap.data(), docSnap.id);
+    } else {
+        console.log("No such document!");
+    }
+}
+
+async function getFuncionario(id) {
+    const docRef = doc(db, "funcionarios", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        popupFuncionario.value = true
+        funcionario.value = {
+            Ativo:  docSnap.data().Ativo,
+            Nome: docSnap.data().Nome,
+            CPF: docSnap.data().CPF,
+            RG: docSnap.data().RG,
+            Nascimento: docSnap.data().Nascimento,
+            EmailPessoal: docSnap.data().EmailPessoal,
+            EmailCorp: docSnap.data().EmailCorp,
+            TelefonePessoal: docSnap.data().TelefonePessoal,
+            TelefoneCorp: docSnap.data().TelefoneCorp,
+            Endereco: docSnap.data().Endereco,
+            Cargo: docSnap.data().Cargo,
+            Nivel: docSnap.data().Nivel,
+            Banco: docSnap.data().Banco,
+            Agencia: docSnap.data().Agencia,
+            Conta: docSnap.data().Conta,
+            TipoPIX: docSnap.data().TipoPIX,
+            ChavePIX: docSnap.data().ChavePIX,
+            Admissao: docSnap.data().Admissao,
+            TipoContratacao: docSnap.data().TipoContratacao,
+            ValorFixo: docSnap.data().ValorFixo,
+            ValorHora: docSnap.data().ValorHora,
+            ValorTransporte: docSnap.data().ValorTransporte,
+            ValorRefeicao: docSnap.data().ValorRefeicao,
+            ValorAuxilio: docSnap.data().ValorAuxilio,
+            ValorPlanoSaude: docSnap.data().ValorPlanoSaude,
+            ValorPlanoOdonto: docSnap.data().ValorPlanoOdonto,
+            Empresas: docSnap.data().Empresas,
+            Admin: docSnap.data().Admin
         }
         console.log("Document data:", docSnap.data(), docSnap.id);
     } else {
@@ -85,8 +177,20 @@ async function deleteCliente(id, nome) {
     }
 }
 
-function closePopup() {
-    popup.value = false;
+async function deleteFuncionario(id, nome) {
+    if (confirm(`Você realmente deseja deletar as informações do funcionário ${nome}? O acesso ao sistema também será restrito.`)) {
+        await deleteDoc(doc(db, "funcionarios", id));
+        getAllFuncionarios()
+        deleteSuccess.value = true
+        setTimeout(() => deleteSuccess.value = false, 5000);
+
+    } else {
+        return
+    }
+}
+
+function closePopupCliente() {
+    popupCliente.value = false;
 }
 
 
@@ -100,7 +204,7 @@ function closePopup() {
 
     <div class="h-screen p-4">
 
-        <!-- Define os bot�es de menu baseado no conte�do do array 'menus' -->
+        <!-- Define os botões de menu baseado no conteúdo do array 'menus' -->
         <div class="flex justify-evenly border-b-2 border-gray-400 pb-4">
 
             <button @click="showClientes"
@@ -128,15 +232,10 @@ function closePopup() {
                 <span class="hidden md:block">Novo Cliente</span>
                 <fa class="md:hidden" icon="plus" />
             </a>
-            <svg v-if="loading" aria-hidden="true" class="self-center w-8 h-8 text-gray-200 animate-spin fill-blue-600"
-                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="currentColor" />
-                <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentFill" />
-            </svg>
+            <div class="flex items-center justify-center">
+                <img v-if="loading" src="../assets/images/itlogo.png" class="w-1/6 animate-spin"/>
+            </div>
+            
             <table v-if="selectedMenu == 'clientes'" class="text-center">
                 <thead>
                     <tr class="bg-gray-500 text-white">
@@ -173,15 +272,72 @@ function closePopup() {
 
 
             <a v-if="selectedMenu == 'funcionarios'" href="/cadastrarfuncionario"
-            class="self-end text-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800">
+                class="self-end text-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-800">
                 <span class="hidden md:block">Novo Funcionario</span>
                 <fa class="md:hidden" icon="plus" />
             </a>
+            <table v-if="selectedMenu == 'funcionarios'" class="text-center">
+                <thead>
+                    <tr class="bg-gray-500 text-white">
+                        <th class="border-2 border-white">Nome</th>
+                        <th class="border-2 border-white">Clientes</th>
+                        <th class="border-2 border-white">Telefone</th>
+                        <th class="border-2 border-white">E-mail</th>
+                        <th class="border-2 border-white">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="even:bg-gray-200" v-for="funcionario in funcionarios">
+                        <td>{{ funcionario.Nome }}</td>
+                        <td class="flex flex-col">
+                            <template v-for="empresa in funcionario.Empresas">
+                                <span>{{ empresa }}</span>
+                            </template>
+                        </td>
+                        <td>
+                            <div class="flex flex-col">
+                                <span v-if="funcionario.TelefonePessoal">
+                                    <fa icon="user" class="mx-1" /> {{ funcionario.TelefonePessoal }}
+                                </span>
+                                <span v-if="funcionario.TelefoneCorp">
+                                    <fa icon="user-tie" class="mx-1" /> {{ funcionario.TelefoneCorp }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col">
+                                <span v-if="funcionario.EmailPessoal">
+                                    <fa icon="user" class="mx-1" /> {{ funcionario.EmailPessoal }}
+                                </span>
+                                <span v-if="funcionario.EmailCorp">
+                                    <fa icon="user-tie" class="mx-1" /> {{ funcionario.EmailCorp }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex content-center justify-evenly">
+                                <button @click="getFuncionario(funcionario.id)"
+                                class="text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600">
+                                    <fa icon="magnifying-glass" />
+                                </button>
+                                <a class="text-white bg-green-600 px-2 py-1 rounded-lg hover:bg-green-700">
+                                    <fa icon="pencil" />
+                                </a>
+                                <button @click="deleteFuncionario(funcionario.id, funcionario.Nome)"
+                                    class="text-white bg-red-600 px-2 py-1 rounded-lg hover:bg-gray-600">
+                                    <fa icon="trash-can" />
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
 
         </main>
 
 
-        <div v-if="popup"
+        <div v-if="popupCliente"
             class="animate__animated animate__fadeIn fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
             <div
                 class="py-4 md:py-0 mx-1 md:mx-0 bg-white md:w-1/2 md:h-1/2 flex flex-col justify-center px-4 gap-y-2 border-2 border-black">
@@ -198,7 +354,7 @@ function closePopup() {
                     <p><span class="text-sm font-semibold">Celular:</span> {{ cliente.Celular }}</p>
                     <p><span class="text-sm font-semibold">E-mail:</span> {{ cliente.Email }}</p>
                 </div>
-                <button @click="closePopup"
+                <button @click="closePopupCliente"
                     class="self-center mt-4 w-1/5 px-3 py-2 md:px-0 md:py-1 bg-red-600 text-white rounded-lg hover:bg-red-800 flex items-center justify-center gap-x-2">
                     <fa icon="rotate-left" class="mr-1" />
                     <span class="hidden md:block">Voltar</span>
@@ -211,10 +367,10 @@ function closePopup() {
             <div
                 class="text-white bg-green-600 rounded-lg flex justify-center items-center w-full py-4 gap-x-4 px-2 md:mx-2">
                 <fa class="text-xl" icon="check" />
-                <span class="font-semibold">Os dados foram excluidos do banco.</span>
+                <span class="font-semibold">Os dados foram excluídos do sistema.</span>
             </div>
         </div>
-
+        
     </div>
 
 </template>

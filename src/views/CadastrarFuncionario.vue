@@ -127,8 +127,8 @@ const funcionario = computed(() => ({
     ValorAuxilio: parseFloat(auxilioValor.value),
     ValorPlanoSaude: parseFloat(saudePlano.value),
     ValorPlanoOdonto: parseFloat(odontoPlano.value),
-    Empresas: empresas.value
-
+    Empresas: empresas.value,
+    Admin: false
 }))
 
 async function postFuncionario() {
