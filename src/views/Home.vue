@@ -50,7 +50,7 @@ async function getAllFuncionarios() {
     querySnapshot.forEach((doc) => {
         const funcionario = {
             id: doc.id,
-            Ativo:  doc.data().Ativo,
+            Ativo: doc.data().Ativo,
             Nome: doc.data().Nome,
             CPF: doc.data().CPF,
             RG: doc.data().RG,
@@ -130,7 +130,7 @@ async function getFuncionario(id) {
     if (docSnap.exists()) {
         popupFuncionario.value = true
         funcionario.value = {
-            Ativo:  docSnap.data().Ativo,
+            Ativo: docSnap.data().Ativo,
             Nome: docSnap.data().Nome,
             CPF: docSnap.data().CPF,
             RG: docSnap.data().RG,
@@ -189,8 +189,9 @@ async function deleteFuncionario(id, nome) {
     }
 }
 
-function closePopupCliente() {
+function closePopup() {
     popupCliente.value = false;
+    popupFuncionario.value = false;
 }
 
 
@@ -232,10 +233,10 @@ function closePopupCliente() {
                 <span class="hidden md:block">Novo Cliente</span>
                 <fa class="md:hidden" icon="plus" />
             </a>
-            <div class="flex items-center justify-center">
-                <img v-if="loading" src="../assets/images/itlogo.png" class="w-1/6 animate-spin"/>
+            <div v-if="loading" class="flex items-center justify-center">
+                <img src="../assets/images/itlogo.png" class="w-40 animate-spin" />
             </div>
-            
+
             <table v-if="selectedMenu == 'clientes'" class="text-center">
                 <thead>
                     <tr class="bg-gray-500 text-white">
@@ -317,7 +318,7 @@ function closePopupCliente() {
                         <td>
                             <div class="flex content-center justify-evenly">
                                 <button @click="getFuncionario(funcionario.id)"
-                                class="text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600">
+                                    class="text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600">
                                     <fa icon="magnifying-glass" />
                                 </button>
                                 <a class="text-white bg-green-600 px-2 py-1 rounded-lg hover:bg-green-700">
@@ -336,7 +337,7 @@ function closePopupCliente() {
 
         </main>
 
-
+        <!-- Detalhes do cliente -->
         <div v-if="popupCliente"
             class="animate__animated animate__fadeIn fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
             <div
@@ -354,7 +355,104 @@ function closePopupCliente() {
                     <p><span class="text-sm font-semibold">Celular:</span> {{ cliente.Celular }}</p>
                     <p><span class="text-sm font-semibold">E-mail:</span> {{ cliente.Email }}</p>
                 </div>
-                <button @click="closePopupCliente"
+                <button @click="closePopup"
+                    class="self-center mt-4 w-1/5 px-3 py-2 md:px-0 md:py-1 bg-red-600 text-white rounded-lg hover:bg-red-800 flex items-center justify-center gap-x-2">
+                    <fa icon="rotate-left" class="mr-1" />
+                    <span class="hidden md:block">Voltar</span>
+                </button>
+            </div>
+        </div>
+
+        <div v-if="popupFuncionario"
+            class="animate__animated animate__fadeIn fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center ">
+            <div class="py-4 md:py-8 bg-white flex flex-col justify-center px-8 gap-y-2 border-2 border-black">
+                <div class="border-b-2 border-gray-800 pb-2">
+                    <p><span class="font-semibold" :class="funcionario.Ativo ? 'text-blue-600' : 'text-red-600'">{{
+                            funcionario.Ativo ? "Ativo" : "Inativo"
+                    }}</span>
+                    </p>
+                    <p class="flex justify-start gap-x-1 my-2">
+                        <template v-for="cliente in funcionario.Empresas">
+                            <span
+                                class="text-xs bg-blue-600 py-1 px-2 rounded-lg text-white font-semibold flex items-center gap-x-1">
+                                {{ cliente.split(' ').slice(0, 2).join(' ') }}
+                            </span>
+
+                        </template>
+                    </p>
+                    <p><span class="text-sm font-semibold">Nome:</span> {{ funcionario.Nome }}</p>
+                    <div class="flex justify-between gap-x-8">
+                        <p><span class="text-sm font-semibold">CPF:</span> {{ funcionario.CPF }}</p>
+                        <p><span class="text-sm font-semibold">RG:</span> {{ funcionario.RG }}</p>
+                        <p><span class="text-sm font-semibold">Nascimento:</span> {{ `${new
+                                Date(funcionario.Nascimento.seconds * 1000).getDate()} / ${new
+                                    Date(funcionario.Nascimento.seconds * 1000).getMonth() + 1} / ${new
+                                        Date(funcionario.Nascimento.seconds * 1000).getFullYear()}`
+                        }}</p>
+                    </div>
+
+                </div>
+                <div class="flex flex-col justify-start border-b-2 border-gray-800 pb-2">
+                    <p><span class="text-sm font-semibold">Endereço:</span> {{ funcionario.Endereco }}</p>
+                    <div class="flex justify-between">
+                        <p><span class="text-sm font-semibold">Telefone Pessoal:</span> {{ funcionario.TelefonePessoal
+                        }}</p>
+                        <p v-if="funcionario.TelefoneCorp"><span class="text-sm font-semibold">Telefone
+                                Corporativo:</span> {{ funcionario.TelefoneCorp }}</p>
+                    </div>
+
+                    <p v-if="funcionario.EmailPessoal"><span class="text-sm font-semibold">E-mail Pessoal:</span> {{
+                            funcionario.EmailPessoal
+                    }}</p>
+                    <p><span class="text-sm font-semibold">E-mail Corporativo:</span> {{ funcionario.EmailCorp }}
+                    </p>
+
+                </div>
+                <div class="flex flex-col justify-start border-b-2 border-gray-800 pb-2" v-if="funcionario.Banco || funcionario.TipoPIX">
+                    <div class="flex justify-between gap-x-8">
+                        <p v-if="funcionario.Banco"><span class="text-sm font-semibold">Banco:</span> {{
+                                funcionario.Banco
+                        }}</p>
+                        <p v-if="funcionario.Agencia"><span class="text-sm font-semibold">Agência:</span> {{
+                                funcionario.Agencia
+                        }}</p>
+                        <p v-if="funcionario.Conta"><span class="text-sm font-semibold">Conta:</span> {{
+                                funcionario.Conta
+                        }}</p>
+
+                    </div>
+                    <div class="flex justify-between gap-x-8">
+                        <p v-if="funcionario.TipoPIX"><span class="text-sm font-semibold">Tipo PIX:</span> {{
+                                funcionario.TipoPIX
+                        }}</p>
+                        <p v-if="funcionario.ChavePIX"><span class="text-sm font-semibold">Chave PIX:</span> {{
+                                funcionario.ChavePIX
+                        }} </p>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-start">
+                    <div class="flex justify-between gap-x-8">
+                        <p><span class="text-sm font-semibold">Admissão:</span> {{ `${new
+                                Date(funcionario.Admissao.seconds * 1000).getDate()} / ${new
+                                    Date(funcionario.Admissao.seconds * 1000).getMonth() + 1} / ${new
+                                        Date(funcionario.Admissao.seconds * 1000).getFullYear()}`
+                        }} </p>
+                        <p v-if="funcionario.TipoContratacao"><span class="text-sm font-semibold">Tipo Contratação:</span> {{ funcionario.TipoContratacao }}</p>
+                        <p><span class="text-sm font-semibold">Cargo:</span> {{ funcionario.Cargo }}</p>
+                        <p><span class="text-sm font-semibold">Nível:</span> {{ funcionario.Nivel }}</p>
+
+                    </div>
+                    <div class="flex justify-between gap-x-8">
+                        <p v-if="funcionario.ValorFixo"><span class="text-sm font-semibold">Valor Fixo:</span> {{ funcionario.ValorFixo.toFixed(2) }}</p>
+                        <p v-if="funcionario.ValorHora"><span class="text-sm font-semibold">Valor Hora:</span> {{ funcionario.ValorHora.toFixed(2) }}</p>
+                    </div>
+                    <div class="flex justify-between gap-x-8">
+                        <p v-if="funcionario.ValorTransporte"><span class="text-sm font-semibold">Valor Transporte:</span> {{ funcionario.ValorTransporte.toFixed(2) }}</p>
+                        <p v-if="funcionario.ValorRefeicao"><span class="text-sm font-semibold">Valor Refeição:</span> {{ funcionario.ValorRefeicao.toFixed(2) }}</p>
+                        <p v-if="funcionario.ValorAuxilio"><span class="text-sm font-semibold">Valor Auxílio:</span> {{ funcionario.ValorAuxilio.toFixed(2) }}</p>
+                    </div>
+                </div>
+                <button @click="closePopup"
                     class="self-center mt-4 w-1/5 px-3 py-2 md:px-0 md:py-1 bg-red-600 text-white rounded-lg hover:bg-red-800 flex items-center justify-center gap-x-2">
                     <fa icon="rotate-left" class="mr-1" />
                     <span class="hidden md:block">Voltar</span>
@@ -370,7 +468,7 @@ function closePopupCliente() {
                 <span class="font-semibold">Os dados foram excluídos do sistema.</span>
             </div>
         </div>
-        
+
     </div>
 
 </template>
